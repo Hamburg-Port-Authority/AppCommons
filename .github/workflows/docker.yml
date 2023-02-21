@@ -1,0 +1,46 @@
+name: Docker-Build
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions: 
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login to GHCR
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Docker meta
+      id: meta_build
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ghcr.io/Hamburg-Port-Authority/kubernetes-azure-agent 
+        labels: |
+          org.opencontainers.image.title="AppCommons"
+          org.opencontainers.image.description="Application Commons for plattform usage"
+          org.opencontainers.image.vendor="https://github.com/Hamburg-Port-Authority"
+          org.label-schema.url="https://github.com/Hamburg-Port-Authority/AppCommons"
+          org.label-schema.usage="https://github.com/Hamburg-Port-Authority/AppCommons/blob/main/README.md"
+          org.label-schema.schema-version="1.0"
+        tags: |
+          type=schedule
+          type=ref,event=tag
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: ./src/docker/Dockerfile
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta_build.outputs.tags }}
+        labels: ${{ steps.meta_build.outputs.labels }}
