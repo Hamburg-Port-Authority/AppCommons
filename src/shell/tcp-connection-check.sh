@@ -13,10 +13,11 @@ while true; do
             fulld+=" "
             fulld+=$(date +%T)
             #check connection
+            resolvedIp=$(dig +short ${ip})
             if timeout 5 bash -c "cat < /dev/null >/dev/tcp/${ip}/22"; then
-                echo -e "Success - $fulld - $ip - $NODE_NAME - $NODE_IP"
+                echo -e "Success - $fulld - $ip [$resolvedIp] - $NODE_NAME - $NODE_IP"
             else
-                echo -e "Failure - $fulld - $ip - $NODE_NAME - $NODE_IP" 
+                echo -e "Failure - $fulld - $ip [$resolvedIp] - $NODE_NAME - $NODE_IP" 
             fi >> "$out_file"
             unset fulld
         done < "$host_file"
