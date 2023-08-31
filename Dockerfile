@@ -13,4 +13,7 @@ RUN adduser -s /bin/zsh -h /home/worker -D -u 1000 worker \
 ENV PATH="$PATH:/home/worker/.local/bin"
 # copy shell scripts to local env
 COPY src/shell/ /home/worker/.local/bin
+# create default folders
+RUN mkdir /tmp/tcp-connection-check
+RUN chmod 777 -R /tmp
 USER worker
