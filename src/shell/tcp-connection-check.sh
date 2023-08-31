@@ -1,7 +1,7 @@
 #!/bin/bash
 
 host_file=/tmp/tcp-connection-check/host_file.txt
-out_file=/tmp/tcp-connection-check/results.txt
+out_file=/tmp/tcp-results.txt
 
 while true; do
     while read -r ip; do
